@@ -67,7 +67,7 @@ public class List_courses extends AppCompatActivity {
         };
     }
 
-    private  void doOnclicklistview()
+    private  void doOnclicklistview()  // không cần phân thread
     {
         Thread thread = new Thread(new Runnable() {
             @Override
@@ -81,7 +81,6 @@ public class List_courses extends AppCompatActivity {
                         Message progressMsg = new Message();
                         progressMsg.setData(bundle);
                         mHandler.sendMessage(progressMsg);
-
                     }
                 });
             }

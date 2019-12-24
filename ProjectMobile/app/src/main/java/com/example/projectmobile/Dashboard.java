@@ -31,7 +31,7 @@ public class Dashboard extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dashboard_activity);
+        setContentView(R.layout.profile_activity);
 //        toolbar = (Toolbar)findViewById(R.id.toolbar12);
 //        setSupportActionBar(toolbar);
 //        if(getSupportActionBar() != null)

@@ -2,7 +2,7 @@ package com.example.projectmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
-
+import com.example.projectmobile.database.getDATA;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                                         edtPassword.getText().clear();
                                         String token = (String) responseBody.get("token");
                                         getSharedPreferences("AUTH_TOKEN",0).edit().putString("TOKEN", token).commit();
-                                        Intent intent =new Intent(getApplicationContext(), Home_navigation.class);
+                                        Intent intent =new Intent(getApplicationContext(), getDATA.class);
                                         intent.putExtra("IDENT",username);
                                         startActivity(intent);
                                         progressDialog.dismiss();

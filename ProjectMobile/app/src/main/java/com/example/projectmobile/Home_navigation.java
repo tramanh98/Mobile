@@ -21,6 +21,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.security.acl.Group;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -33,6 +35,7 @@ public class Home_navigation extends AppCompatActivity {
         setContentView(R.layout.home_navigation);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
+
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.drawer_layout);
@@ -71,65 +74,65 @@ public class Home_navigation extends AppCompatActivity {
 
     }
 
-    private  void DeadlineHandler()
-    {
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-
-                        String endpoint = "webservice/rest/server.php";
-                        String token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
-                        final RequestParams requestParams = new RequestParams();
-                        requestParams.add("wstoken",token);
-                        requestParams.add("moodlewsrestformat","json");
-                        requestParams.add("wsfunction","core_webservice_get_site_info");
-
-                        HttpUtils.get(endpoint, requestParams, new JsonHttpResponseHandler() {
-
-                            @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
-                                Log.d("response", "onSuccess");
-                                Log.d("response ", responseBody.toString());
-                                try{
-                                    if(responseBody.has("fullname")) {
-                                        String fn = (String) responseBody.get("fullname");
-                                        edtFullname.setText(fn);
-                                    }
-                                    if(responseBody.has("username")) {
-                                        String un = (String) responseBody.get("username");
-                                        edtUsername.setText(un);
-                                    }
-                                    if(responseBody.has("userid")) {
-                                        String uid = responseBody.get("userid").toString();
-                                        edtUserid.setText(uid);
-                                    }
-                                }
-                                catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-
-                            }
-
-                            @Override
-                            public void onRetry(int retryNo) {
-//                                super.onRetry(retryNo);
-                                Log.d("onRetry","retry");
-                            }
-
-                            @Override
-                            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                                super.onFailure(statusCode, headers, responseString, throwable);
-                                Log.d("onFailure","fail");
-                            }
-
-                            @Override
-                            public void onFinish() {
-//                                super.onFinish();
-                                Log.d("onFinish","dashboard");
-
-                            }
-                        });
-                    }
-                }, 3000);
-    }
+//    private  void DeadlineHandler()
+//    {
+//        new android.os.Handler().postDelayed(
+//                new Runnable() {
+//                    public void run() {
+//
+//                        String endpoint = "webservice/rest/server.php";
+//                        String token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
+//                        final RequestParams requestParams = new RequestParams();
+//                        requestParams.add("wstoken",token);
+//                        requestParams.add("moodlewsrestformat","json");
+//                        requestParams.add("wsfunction","core_webservice_get_site_info");
+//
+//                        HttpUtils.get(endpoint, requestParams, new JsonHttpResponseHandler() {
+//
+//                            @Override
+//                            public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
+//                                Log.d("response", "onSuccess");
+//                                Log.d("response ", responseBody.toString());
+//                                try{
+//                                    if(responseBody.has("fullname")) {
+//                                        String fn = (String) responseBody.get("fullname");
+//                                        edtFullname.setText(fn);
+//                                    }
+//                                    if(responseBody.has("username")) {
+//                                        String un = (String) responseBody.get("username");
+//                                        edtUsername.setText(un);
+//                                    }
+//                                    if(responseBody.has("userid")) {
+//                                        String uid = responseBody.get("userid").toString();
+//                                        edtUserid.setText(uid);
+//                                    }
+//                                }
+//                                catch (JSONException e) {
+//                                    e.printStackTrace();
+//                                }
+//
+//                            }
+//
+//                            @Override
+//                            public void onRetry(int retryNo) {
+////                                super.onRetry(retryNo);
+//                                Log.d("onRetry","retry");
+//                            }
+//
+//                            @Override
+//                            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+////                                super.onFailure(statusCode, headers, responseString, throwable);
+//                                Log.d("onFailure","fail");
+//                            }
+//
+//                            @Override
+//                            public void onFinish() {
+////                                super.onFinish();
+//                                Log.d("onFinish","dashboard");
+//
+//                            }
+//                        });
+//                    }
+//                }, 3000);
+//    }
 }
