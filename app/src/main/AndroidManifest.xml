@@ -12,31 +12,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Course"></activity>
-        <activity android:name=".List_courses"></activity>
-        <activity android:name=".Dashboard">
-
-        </activity>
-        <activity
-            android:name=".Home_navigation"
-            android:theme="@style/AppTheme.NoActionBar">
-
-        </activity>
+        <activity android:name=".Course" />
+        <activity android:name=".List_courses" />
+        <activity android:name=".Dashboard"></activity>
         <activity android:name=".LoginActivity">
-
-        </activity>
-        <activity android:name=".forTest">
-
-        </activity>
-        <activity android:name=".database.getDATA">
-
-        </activity>
-        <activity android:name=".ForCalendar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".forTest"></activity>
     </application>
 
 </manifest>

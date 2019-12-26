@@ -10,7 +10,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListView;
 import android.widget.TextView;
@@ -48,62 +47,42 @@ public class Course extends AppCompatActivity {
 
     private  void getModule(final Context context)
     {
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        String endpoint = "webservice/rest/server.php";
-                        String token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
-                        final RequestParams requestParams = new RequestParams();
-                        requestParams.add("wstoken",token);
-                        requestParams.add("moodlewsrestformat","json");
-                        requestParams.add("wsfunction","core_course_get_contents");
-                        requestParams.add("courseid",Integer.toString(valueID));
-                        HttpUtils.get(endpoint, requestParams, new JsonHttpResponseHandler() {
 
-                            @Override
-                            public void onSuccess(int statusCode, Header[] headers, JSONArray responseBody) {
-                                Log.d("response", "onSuccess");
+            String endpoint = "webservice/rest/server.php";
+            String token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
+            final RequestParams requestParams = new RequestParams();
+            requestParams.add("wstoken",token);
+            requestParams.add("moodlewsrestformat","json");
+            requestParams.add("wsfunction","core_course_get_contents");
+            requestParams.add("courseid",Integer.toString(valueID));
+            HttpUtils.get(endpoint, requestParams, new JsonHttpResponseHandler() {
 
-                                //String responseData = responseBody.toString();
-                                if(responseBody.length()> 1) {
-                                    intializeData(responseBody);
-                                    listAdapter = new ExpandableListAdapter(context, listDataHeader,listHashMap);
-                                    listView.setAdapter(listAdapter);
-                                }
-                            }
+                // dữ liệu được trả về
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONArray responseBody) {
+                    Log.d("response", "onSuccess");
 
-                            @Override
-                            public void onRetry(int retryNo) {
-                                Log.d("onRetry","retry");
-                            }
-
-                            @Override
-                            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-//                                super.onFailure(statusCode, headers, responseString, throwable);
-                                Log.d("onFailure","fail");
-                            }
-
-                            @Override
-                            public void onFinish() {
-//                                super.onFinish();
-                                Log.d("onFinish","dashboard");
-
-                            }
-                        });
+                    if(responseBody.length()> 1) {
+                        intializeData(responseBody);
+                        listAdapter = new ExpandableListAdapter(context, listDataHeader,listHashMap);
+                        listView.setAdapter(listAdapter);
                     }
-                },3000);
+                }
+            });
 
     }
 
-
+/*
+* cho vào hàm dưới 1 mảng JSON, nó sẽ xử lý dữ liệu và đầu ra là một danh sách các tên chủ đề, trong mỗi
+* tên chủ đề có các sự kiện nhỏ
+* */
     private void intializeData(JSONArray responseBody) {
-        //First Add Header List
         listDataHeader=new ArrayList<>();
         listHashMap=new HashMap<>();
 
         for (int i=0; i<responseBody.length();i++)
         {
-            List<String> childList=new ArrayList<>();
+            List<String> childList=new ArrayList<>(); // danh sách các sự kiện nhỏ cho mỗi chủ đề
             try {
                 JSONObject object = responseBody.getJSONObject(i);
                 String HeaderList = (String) object.get("name");
@@ -115,7 +94,6 @@ public class Course extends AppCompatActivity {
                     object = moduleCourse_Array.getJSONObject(j);
                     String childListStr = (String) object.get("name");
                     childList.add(childListStr);
-
                 }
                 listHashMap.put(listDataHeader.get(i),childList);
 
@@ -124,7 +102,9 @@ public class Course extends AppCompatActivity {
             }
         }
     }
-
+/*
+* Dưới đây là code cho giao diện
+* */
     public class ExpandableListAdapter extends BaseExpandableListAdapter {
         Context context;
         List<String> listDataHeader;

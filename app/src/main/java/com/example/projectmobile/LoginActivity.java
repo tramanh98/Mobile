@@ -1,21 +1,24 @@
 package com.example.projectmobile;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import com.example.projectmobile.database.getDATA;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import cz.msebera.android.httpclient.Header;
@@ -28,16 +31,28 @@ public class LoginActivity extends AppCompatActivity {
     String password;
     String username;
     private Cursor comprobar;
+    getDATA getDT;
     Intent calendar;
+    Handler mHandler;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String old_token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
+        HttpUtils.cancelRequest();
+        if (old_token != null){
+            Intent intent =new Intent(getApplicationContext(), forTest.class);
+            intent.putExtra("IDENT",username);
+            startActivity(intent);
+            finish();
+        }
+        progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
+        HttpUtils.renew();
         setContentView(R.layout.login_uit_activity);
         btnLogin = (CardView) findViewById(R.id.login);
         edtUsername = (EditText)findViewById(R.id.username);
         edtPassword = (EditText)findViewById(R.id.password);
-
-
+        onHandlerlistview(this);
         btnLogin.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -45,18 +60,72 @@ public class LoginActivity extends AppCompatActivity {
                 handleLogin();
             }
         });
+
+
+
     }
+    private void callSendHandler(String mess){
+        Bundle bundle = new Bundle();
+        bundle.putString("key_1", mess);
+        Message progressMsg = new Message();
+        progressMsg.setData(bundle);
+        mHandler.sendMessage(progressMsg);
+    }
+    public void onHandlerlistview(final Context ct) {
+        mHandler = new Handler(){
+            String a;
+            //            Integer i =0;
+            @Override
+            public void handleMessage(@NonNull Message msg) {
+                Bundle bundle = msg.getData();
+                Log.d("content", bundle.getString("key_1").toString());
+                a = bundle.getString("key_1").toString();
+                if(a=="1")
+                {
+                    getDT.deleteDB(ct);
+                    getDT.createDB(ct);
+                }
+                if(a=="2")
+                {
+                    HttpUtils.cancelRequest();
+                    getDT.setCourses();
+                }
+                if(a=="3")
+                {
+                    HttpUtils.cancelRequest();
+                    getDT.setCourseDeadline(0);
+                }
+                if(a=="doneDL")
+                {
+                    progressDialog.dismiss();
+                    HttpUtils.cancelRequest();
+                    Intent intent =new Intent(getApplicationContext(), forTest.class);
+                    startActivity(intent);
+                    finish();
+                }
+                if(a.length() ==8)
+                {
+                    getSharedPreferences("AUTH_TOKEN",0).edit().putString("MSSV", a).commit();
+                }
+                if(a.length() > 10)
+                {
+                    getSharedPreferences("AUTH_TOKEN",0).edit().putString("FULLNAME", a).commit();
+
+                }
+            }
+        };
+    }
+
+
     private  void handleLogin()
     {
         username = edtUsername.getText().toString();
         password = edtPassword.getText().toString();
 
-        final ProgressDialog progressDialog = new ProgressDialog(this, R.style.AppTheme_Dark_Dialog);
+
         progressDialog.setIndeterminate(true);
         progressDialog.setMessage("Login...");
         progressDialog.show();
-
-
         new android.os.Handler().postDelayed(
                 new Runnable() {
                     public void run() {
@@ -65,7 +134,6 @@ public class LoginActivity extends AppCompatActivity {
                         requestParams.add("username",username);
                         requestParams.add("password",password);
                         requestParams.add("service","moodle_mobile_app");
-
                         HttpUtils.get(endpoint, requestParams, new JsonHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, JSONObject responseBody) {
@@ -76,11 +144,10 @@ public class LoginActivity extends AppCompatActivity {
                                         edtPassword.getText().clear();
                                         String token = (String) responseBody.get("token");
                                         getSharedPreferences("AUTH_TOKEN",0).edit().putString("TOKEN", token).commit();
-                                        Intent intent =new Intent(getApplicationContext(), getDATA.class);
-                                        intent.putExtra("IDENT",username);
-                                        startActivity(intent);
-                                        progressDialog.dismiss();
-                                        finish();
+                                        getDT = new getDATA(token, mHandler);
+
+                                        callSendHandler("1");
+                                        HttpUtils.cancelRequest();
                                     }
                                     else{
                                         String error = (String)responseBody.get("error");
@@ -95,7 +162,6 @@ public class LoginActivity extends AppCompatActivity {
                                                 });
                                         alertDialog.show();
                                         progressDialog.dismiss();
-
                                     }
                                 }
                                 catch (Exception e){
@@ -106,30 +172,17 @@ public class LoginActivity extends AppCompatActivity {
 
                             @Override
                             public void onRetry(int retryNo) {
-//                                super.onRetry(retryNo);
+                                Log.d("response login","retryyyyyyyyyy");
                                 if(retryNo == 4){
                                     HttpUtils.cancelRequest();
                                 }
                             }
 
                             @Override
-                            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-//                                super.onFailure(statusCode, headers, throwable, errorResponse);
-                                Log.d("Failer","On Failure");
-                                throwable.printStackTrace();
-                            }
-
-                            @Override
                             public void onFinish() {
-//                                super.onFinish();
-                                Log.d("onFinish","set invisible here");
-                                progressDialog.dismiss();
-                                //show error dialog
                             }
                         });
                     }
-                }, 3000);
-
+                }, 0);
     }
-
 }

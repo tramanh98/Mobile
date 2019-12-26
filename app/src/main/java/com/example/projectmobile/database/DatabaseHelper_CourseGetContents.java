@@ -6,8 +6,9 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 
 public class DatabaseHelper_CourseGetContents extends SQLiteOpenHelper {
-    private static final String DATABASE_NAME = "EVENTS_COURSES.db";
-    private static final String DATABASE_TABLE = "core_course_get_contents";  // lấy danh mục các chủ đề của 1 môn học
+    private static final String DATABASE_NAME = "STUDENT";
+    private static final String DATABASE_TABLE = "TOPIC_COURSE";  // lấy danh mục các chủ đề của 1 môn học
+    private static final String COL_0 = "ID";
     private static final String COL_1 = "ID_Course";
     private static final String COL_2 = "ID_Topic";
     private static final String COL_3 = "NAME_Topic";
@@ -16,16 +17,17 @@ public class DatabaseHelper_CourseGetContents extends SQLiteOpenHelper {
 
 
 
-    public DatabaseHelper_CourseGetContents(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
+    public DatabaseHelper_CourseGetContents(Context context) {
 
-        super(context, name, null, 1);
+        super(context, DATABASE_NAME, null, 2);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_CONTACTS_TABLE = "CREATE TABLE " + DATABASE_TABLE + "("
-                + COL_1 + " INTEGER," + COL_2 + " INTERGER,"
-                + COL_3 + " TEXT," + COL_4 + " INTERGER," + COL_5 + " TEXT" + ")";
+                + COL_0 + " INTEGER PRIMARY KEY,"
+                + COL_1 + " INTEGER," + COL_2 + " INTEGER,"
+                + COL_3 + " TEXT," + COL_4 + " INTEGER," + COL_5 + " TEXT" + ")";
         db.execSQL(CREATE_CONTACTS_TABLE);
     }
 
@@ -43,7 +45,6 @@ public class DatabaseHelper_CourseGetContents extends SQLiteOpenHelper {
         values.put(COL_3, content.getName_topic());
         values.put(COL_4, content.getIdmodule());
         values.put(COL_5, content.getName_module());
-        //Neu de null thi khi value bang null thi loi
 
         db.insert(DATABASE_TABLE,null,values);
         db.close();
