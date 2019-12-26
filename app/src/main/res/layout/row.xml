@@ -33,6 +33,16 @@
             android:layout_margin="5dp"
             android:textSize="20sp"
             android:id="@+id/textView2"
+            android:textStyle="bold"
+        />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Main Title"
+            android:textColor="#000"
+            android:layout_margin="5dp"
+            android:textSize="20sp"
+            android:id="@+id/textView3"
             />
 
 

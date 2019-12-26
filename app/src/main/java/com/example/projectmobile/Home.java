@@ -40,7 +40,10 @@ public class Home extends AppCompatActivity {
     private DrawerLayout drawer;
     private DatabaseHelper_Courses dtbCourses;
     ListView listView;
+    NavigationView navigationView;
     List<Course_deadline> startTIME;
+    TextView name;
+    View inflatedView;
     private SimpleDateFormat dateFormatForDisplaying = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
 
     @Override
@@ -48,10 +51,13 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_navigation);
         listView=(ListView)findViewById(R.id.listview);
+
+        // lấy dữ liệu
         dtbCourses = new DatabaseHelper_Courses(this);
         String token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
-        Log.d("complete: ", "done");
 
+        /*
+        * phần thân của thanh điều hướng*/
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         drawer = findViewById(R.id.drawer_layout);
@@ -64,13 +70,21 @@ public class Home extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(false);
         actionBar.setTitle("Calendar");
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         compactCalendar = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendar.setUseThreeLetterAbbreviation(true);
 
+        /* Lấy dữ liệu deadline ở database*/
         handlerDeadline();
         handlerCalendar(calcul(new Date().getTime()));
 
+        /*
+         * Hiển thị tên ở header của thanh điều hướng*/
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
+        View header = navigationView.getHeaderView(0);
+        name =(TextView) header.findViewById(R.id.yourNAME);
+        name.setText(getSharedPreferences("AUTH_TOKEN",0).getString("FULLNAME",null));
+
+        /*Lắng nghe sự kiện ở thanh điều hướng*/
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -127,8 +141,9 @@ public class Home extends AppCompatActivity {
         Date dt = new Date();  // current time
         int munite = dt.getMinutes();     // gets the current month
         int hours = dt.getHours(); // gets hour of day
+        int second = dt.getSeconds();
 
-        return time - (munite*60 + 60*60*hours)*1000L;
+        return time - (second*10 + munite*60 + 60*60*hours)*1000L;
     }
     private void handlerCalendar(Long time)
     {
@@ -179,8 +194,10 @@ public class Home extends AppCompatActivity {
             LayoutInflater layoutInflater = (LayoutInflater)getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             View row = layoutInflater.inflate(R.layout.row, parent, false);
             TextView time = row.findViewById(R.id.textView1);
-            TextView content = row.findViewById(R.id.textView2);
+            TextView course = row.findViewById(R.id.textView2);
+            TextView content = row.findViewById(R.id.textView3);
             time.setText(convertTime(rTitle.get(position).getTime_Start()*1000L));
+            course.setText(dtbCourses.getCourse(rTitle.get(position).getId_course()));
             content.setText(rTitle.get(position).getName_event());
 
             return row;

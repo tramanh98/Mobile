@@ -122,8 +122,9 @@ public class getDATA extends AppCompatActivity{
                             String fn = (String) object.get("fullname");
                             Integer id = object.getInt("id");
                             Integer timeend = object.getInt("enddate");
-                            if(timeend == 1577646000)
+                            if(timeend *1000L > new Date().getTime())
                             {
+                                Log.d("time: ", String.valueOf(new Date().getTime()));
                                 Courses crs = new Courses(id,fn);
                                 listCourses.add(crs);
                                 executor.execute(new RequestDBCourses(id,fn));

@@ -30,13 +30,11 @@ public class DatabaseHelper_Courses extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_COURSES_TABLE = "CREATE TABLE " + DATABASE_TABLE1 + "("
-                + COL_0 + " INTEGER PRIMARY KEY,"
-                + COL_1 + " INTEGER," + COL_2 + " TEXT" + ")";
+                + COL_1 + " INTEGER PRIMARY KEY," + COL_2 + " TEXT" + ")";
 
         String CREATE_DEADLINE_TABLE = "CREATE TABLE " + DATABASE_TABLE2 + "("
-                + COL_00 + " INTEGER PRIMARY KEY,"
-                + COL_11 + " INTEGER,"
-                + COL_22 + " INTEGER,"
+                + COL_22 + " INTEGER PRIMARY KEY,"  // ID event là khóa chính
+                + COL_11 + " INTEGER,"  // ID courses
                 + COL_3 + " TEXT," + COL_4 + " LONG" + ")";
         db.execSQL(CREATE_COURSES_TABLE);
         db.execSQL(CREATE_DEADLINE_TABLE);
@@ -69,7 +67,7 @@ public class DatabaseHelper_Courses extends SQLiteOpenHelper {
         db.close();
     }
     public List<Integer> getAllCourses() {
-        List<Integer> listcontacts = new ArrayList<>();
+        List<Integer> listCourses = new ArrayList<>();
         // Select All Query
         String selectQuery = "SELECT  * FROM " + DATABASE_TABLE1;
 
@@ -79,12 +77,27 @@ public class DatabaseHelper_Courses extends SQLiteOpenHelper {
         if (cursor.moveToFirst())
         {
             do {
-                listcontacts.add(cursor.getInt(0));
+                listCourses.add(cursor.getInt(0));
             } while (cursor.moveToNext());
         }
         cursor.close();
         db.close();
-        return listcontacts;
+        return listCourses;
+    }
+
+    public String getCourse(int i)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.query(DATABASE_TABLE1, new String[] {COL_1, COL_2}, COL_1 + "=?",
+                new String[] { String.valueOf(i) }, null, null, null, null);
+        if (cursor != null)
+            cursor.moveToFirst();
+
+        String course = cursor.getString(1);
+        cursor.close();
+        db.close();
+        return course;
+
     }
     public List<Courses> getListCourses() {
         List<Courses> listcourses = new ArrayList<>();
@@ -97,7 +110,7 @@ public class DatabaseHelper_Courses extends SQLiteOpenHelper {
         if (cursor.moveToFirst())
         {
             do {
-                Courses cs = new Courses(cursor.getInt(1), cursor.getString(2));
+                Courses cs = new Courses(cursor.getInt(0), cursor.getString(1));
                 listcourses.add(cs);
             } while (cursor.moveToNext());
         }
@@ -117,7 +130,7 @@ public class DatabaseHelper_Courses extends SQLiteOpenHelper {
         if (cursor.moveToFirst())
         {
             do {
-                listTIME.add(cursor.getLong(4));
+                listTIME.add(cursor.getLong(3));
             } while (cursor.moveToNext());
         }
         cursor.close();
@@ -135,7 +148,7 @@ public class DatabaseHelper_Courses extends SQLiteOpenHelper {
         if (cursor.moveToFirst())
         {
             do {
-                Course_deadline cdl = new Course_deadline(cursor.getInt(1), cursor.getInt(2), cursor.getString(3),cursor.getLong(4));
+                Course_deadline cdl = new Course_deadline(cursor.getInt(1), cursor.getInt(0), cursor.getString(2),cursor.getLong(3));
                 listTIME.add(cdl);
             } while (cursor.moveToNext());
         }

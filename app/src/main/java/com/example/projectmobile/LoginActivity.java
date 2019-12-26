@@ -61,8 +61,6 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
     private void callSendHandler(String mess){
         Bundle bundle = new Bundle();
