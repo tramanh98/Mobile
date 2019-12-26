@@ -41,7 +41,7 @@ public class LoginActivity extends AppCompatActivity {
         String old_token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
         HttpUtils.cancelRequest();
         if (old_token != null){
-            Intent intent =new Intent(getApplicationContext(), forTest.class);
+            Intent intent =new Intent(getApplicationContext(), Home.class);
             intent.putExtra("IDENT",username);
             startActivity(intent);
             finish();
@@ -99,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                 {
                     progressDialog.dismiss();
                     HttpUtils.cancelRequest();
-                    Intent intent =new Intent(getApplicationContext(), forTest.class);
+                    Intent intent =new Intent(getApplicationContext(), Home.class);
                     startActivity(intent);
                     finish();
                 }

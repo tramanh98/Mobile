@@ -6,8 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".List_courses">
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/toolbar"
+        android:background="@color/followingBg"
+        />
 
     <ListView
+        android:layout_below="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/listView"

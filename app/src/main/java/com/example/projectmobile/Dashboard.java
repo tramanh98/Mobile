@@ -1,9 +1,10 @@
 package com.example.projectmobile;
-
 import android.os.Bundle;
 import android.widget.TextView;
+
 import com.example.projectmobile.database.DatabaseHelper_Courses;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class Dashboard extends AppCompatActivity {
 
@@ -14,7 +15,12 @@ public class Dashboard extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.profile_activity);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Dashboard");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         dtbCourses = new DatabaseHelper_Courses(this);
         edtFullname = (TextView)findViewById(R.id.fullname);
         edtUsername = (TextView)findViewById(R.id.username);

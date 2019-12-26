@@ -4,16 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".forTest">
+    tools:context=".Home">
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+        <androidx.appcompat.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/toolbar"
+            android:background="@color/followingBg"
+            />
 
         <RelativeLayout
             android:id="@+id/avatar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/grad"
+            android:layout_below="@+id/toolbar"
             android:paddingBottom="20dp">
 
             <RelativeLayout

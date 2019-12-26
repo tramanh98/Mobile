@@ -1,5 +1,4 @@
 package com.example.projectmobile;
-import com.example.projectmobile.database.getDATA;
 import com.example.projectmobile.database.DatabaseHelper_Courses;
 import com.example.projectmobile.database.Course_deadline;
 
@@ -13,7 +12,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,17 +22,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.github.sundeepk.compactcalendarview.CompactCalendarView;
 import com.github.sundeepk.compactcalendarview.domain.Event;
 import com.google.android.material.navigation.NavigationView;
-import com.loopj.android.http.JsonHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.text.Format;
 import java.text.SimpleDateFormat;
@@ -43,16 +34,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import cz.msebera.android.httpclient.Header;
 
-
-public class forTest extends AppCompatActivity {
+public class Home extends AppCompatActivity {
     CompactCalendarView compactCalendar;
     private DrawerLayout drawer;
     private DatabaseHelper_Courses dtbCourses;
     ListView listView;
     List<Course_deadline> startTIME;
-    //private SimpleDateFormat dateFormatForDisplaying = new SimpleDateFormat("dd-M-yyyy hh:mm:ss a", Locale.getDefault());
+    private SimpleDateFormat dateFormatForDisplaying = new SimpleDateFormat("MMMM- yyyy", Locale.getDefault());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,7 +51,6 @@ public class forTest extends AppCompatActivity {
         dtbCourses = new DatabaseHelper_Courses(this);
         String token = getSharedPreferences("AUTH_TOKEN",0).getString("TOKEN",null);
         Log.d("complete: ", "done");
-        //data.setCourseDeadline(token);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -74,12 +62,14 @@ public class forTest extends AppCompatActivity {
 
         final ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(false);
-        actionBar.setTitle(null);
+        actionBar.setTitle("Calendar");
+
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         compactCalendar = (CompactCalendarView) findViewById(R.id.compactcalendar_view);
         compactCalendar.setUseThreeLetterAbbreviation(true);
 
         handlerDeadline();
+        handlerCalendar(calcul(new Date().getTime()));
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener(){
             @Override
@@ -96,34 +86,12 @@ public class forTest extends AppCompatActivity {
                         Intent intent =new Intent(getApplicationContext(), List_courses.class);
                         startActivity(intent);
                     }
-                    if(id==R.id.nav_home)
-                    {
-                        Intent intent =new Intent(getApplicationContext(), Dashboard.class);
-                        startActivity(intent);
-                    }
                     if(id==R.id.nav_logOut)  // xóa token, username, mssv và DB sau đó qua về login
                     {
                         getSharedPreferences("AUTH_TOKEN", 0).edit().remove("TOKEN").commit();
                         getSharedPreferences("AUTH_TOKEN", 0).edit().remove("FULLNAME").commit();
                         getSharedPreferences("AUTH_TOKEN", 0).edit().remove("MSSV").commit();
                         dtbCourses.deleteAllData();
-                        Intent i1 = new Intent(getApplicationContext(), Dashboard.class);        // Specify any activity here e.g. home or splash or login etc
-                        i1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i1.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        i1.putExtra("EXIT", true);
-                        startActivity(i1);
-
-                        Intent i2 = new Intent(getApplicationContext(), List_courses.class);        // Specify any activity here e.g. home or splash or login etc
-                        i2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i2.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        i2.putExtra("EXIT", true);
-                        startActivity(i2);
-
-                        Intent i3 = new Intent(getApplicationContext(), Course.class);        // Specify any activity here e.g. home or splash or login etc
-                        i3.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                        i3.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        i3.putExtra("EXIT", true);
-                        startActivity(i3);
                         Intent intent =new Intent(getApplicationContext(), LoginActivity.class);
                         startActivity(intent);
                         finish();
@@ -138,20 +106,29 @@ public class forTest extends AppCompatActivity {
             }
         } );
 
+
         compactCalendar.setListener(new CompactCalendarView.CompactCalendarViewListener() {
             @Override
             public void onDayClick(Date dateClicked) {
                 Context context = getApplicationContext();
-                Log.d("ten su kien: ", String.valueOf(dateClicked.toString()));
-                Log.d("ten su kien: ", String.valueOf(dateClicked.getTime()));
+                Log.d("ten su kien: ", String.valueOf(calcul(new Date().getTime())));
+//                Log.d("ten su kien: ", String.valueOf(dateClicked.getTime()));
                 handlerCalendar(dateClicked.getTime());
-
             }
+
             @Override
             public void onMonthScroll(Date firstDayOfNewMonth) {
-
+                actionBar.setTitle(dateFormatForDisplaying.format(firstDayOfNewMonth));
             }
         });
+    }
+    private long calcul(Long time)
+    {
+        Date dt = new Date();  // current time
+        int munite = dt.getMinutes();     // gets the current month
+        int hours = dt.getHours(); // gets hour of day
+
+        return time - (munite*60 + 60*60*hours)*1000L;
     }
     private void handlerCalendar(Long time)
     {
@@ -164,18 +141,22 @@ public class forTest extends AppCompatActivity {
             {
                 LstDL.add(startTIME.get(i));
             }
-
         }
         MyAdapter1 adapter = new MyAdapter1(this, LstDL);
         listView.setAdapter(adapter);
-
     }
+
+    public String convertTime(long time){
+        Date date = new Date(time);
+        Format format = new SimpleDateFormat("yyyy MM dd HH:mm:ss");
+        return format.format(date);
+    }
+
     private void handlerDeadline()
     {
         startTIME = dtbCourses.getTableDeadline();
         for(int i=0;i<startTIME.size();i++)
         {
-            //Log.d("data", startTIME.get(i).getTime_Start());
             Event ev1 = new Event(Color.RED, startTIME.get(i).getTime_Start()*1000L,startTIME.get(i).getName_event());
             compactCalendar.addEvent(ev1);
         }
@@ -190,7 +171,6 @@ public class forTest extends AppCompatActivity {
             super(c, R.layout.row, R.id.textView1, title);
             this.context = c;
             this.rTitle = title;
-
         }
 
         @NonNull
@@ -200,8 +180,7 @@ public class forTest extends AppCompatActivity {
             View row = layoutInflater.inflate(R.layout.row, parent, false);
             TextView time = row.findViewById(R.id.textView1);
             TextView content = row.findViewById(R.id.textView2);
-
-            time.setText(new Date(rTitle.get(position).getTime_Start()).toString());
+            time.setText(convertTime(rTitle.get(position).getTime_Start()*1000L));
             content.setText(rTitle.get(position).getName_event());
 
             return row;

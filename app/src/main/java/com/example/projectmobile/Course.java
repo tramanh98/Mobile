@@ -1,6 +1,7 @@
 package com.example.projectmobile;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Context;
 import android.content.Intent;
@@ -39,6 +40,11 @@ public class Course extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_course);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("Chủ đề");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        HttpUtils.renew();
         Intent intent = getIntent();
         valueID = intent.getIntExtra("ID", 0);
         listView=findViewById(R.id.exp_list_view);

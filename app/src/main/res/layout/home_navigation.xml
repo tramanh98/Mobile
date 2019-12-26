@@ -8,7 +8,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".forTest"
+    tools:context=".Home"
     tools:openDrawer="start">
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,7 +19,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorPrimary"
+            android:background="@color/headings"
             android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -37,11 +37,12 @@
                 android:layout_height="250dp"
                 app:compactCalendarTargetHeight="250dp"
                 app:compactCalendarTextSize="12sp"
-                app:compactCalendarBackgroundColor="#ffe95451"
-                app:compactCalendarTextColor="#fff"
+                app:compactCalendarBackgroundColor="#fff"
+                app:compactCalendarTextColor="#000000"
                 app:compactCalendarCurrentSelectedDayBackgroundColor="#E57373"
                 app:compactCalendarCurrentDayBackgroundColor="#B71C1C"
                 app:compactCalendarMultiEventIndicatorColor="#fff"
+                app:compactCalendarEventIndicatorStyle="no_fill_large_indicator"
                 />
         </FrameLayout>
         <ListView
